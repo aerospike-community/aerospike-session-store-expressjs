@@ -1,1 +1,1 @@
-module.exports= require('./lib/aerospike-session-store);
+module.exports= require('./lib/aerospike-session-store');
