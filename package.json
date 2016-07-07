@@ -1,28 +1,22 @@
 {
   "name": "aerospike-session-store",
-  "version": "0.0.1",
-  "description": "aerospike-session module to save session in aerospike",
+  "version": "0.1.0",
+  "description": "Aerospike session store for Express.js session middleware",
   "main": "index.js",
-  "scripts": {
-    "test": "make test"
-  },
   "keywords": [
     "aerospike",
     "session",
     "express"
   ],
-  "author": "nilesh gawde (websym)",
-  "license": "ISC",
+  "license": "Apache-2.0",
   "dependencies": {
-    "aerospike": "latest",
-    "express": "latest",
-    "express-session": "latest",
-    "lodash": "latest",
-    "util": "latest"
+    "aerospike": "^2.0",
+    "express": "^3.0",
+    "express-session": "^1.0"
   },
   "devDependencies": {
-    "chai": "^2.1.2",
-    "mocha": "^2.2.1",
-    "should": "^5.2.0"
+    "mocha": "^2.2",
+    "expect.js": "^0.3",
+    "standard": "^7.0"
   }
 }
