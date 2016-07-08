@@ -15,8 +15,11 @@
     "express-session": "^1.0"
   },
   "devDependencies": {
-    "mocha": "^2.2",
-    "expect.js": "^0.3",
+    "blue-tape": "^0.2",
+    "bluebird": "^3.0",
     "standard": "^7.0"
+  },
+  "scripts": {
+    "test": "DEBUG=* tape \"test/*_test.js\""
   }
 }
