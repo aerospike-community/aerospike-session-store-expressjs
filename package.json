@@ -17,7 +17,8 @@
   "devDependencies": {
     "blue-tape": "^0.2",
     "bluebird": "^3.0",
-    "standard": "^7.0"
+    "standard": "^7.0",
+    "tape": "^4.2.1"
   },
   "scripts": {
     "test": "DEBUG=* tape \"test/*_test.js\""
