@@ -5,10 +5,20 @@ node_js:
 - '4'
 - '0.12'
 - 'iojs'
+env:
+- CXX=g++-4.8
 sudo: false
 os:
 - linux
 dist: trusty
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - g++-4.8
+      - autoconf
+      - libssl-dev
 install:
 - wget -O aerospike-server.tgz http://aerospike.com/download/server/latest/artifact/tgz
 - tar xvzf aerospike-server.tgz
