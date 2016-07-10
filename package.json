@@ -9,10 +9,15 @@
     "express"
   ],
   "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aerospike/aerospike-session-store-expressjs"
+  },
   "dependencies": {
     "aerospike": "^2.0",
     "express": "^3.0",
-    "express-session": "^1.0"
+    "express-session": "^1.0",
+    "debug": "^2.2.0"
   },
   "devDependencies": {
     "blue-tape": "^0.2",
@@ -22,5 +27,8 @@
   },
   "scripts": {
     "test": "DEBUG=* tape \"test/*_test.js\""
+  },
+  "bugs": {
+    "url": "https://github.com/aerospike/aerospike-session-store-expressjs/issues"
   }
 }
