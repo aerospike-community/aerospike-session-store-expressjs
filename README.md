@@ -1,4 +1,7 @@
-# Aerospike Express Session Store
+# Aerospike Express Session Store [![travis][travis-image]][travis-url]
+
+[travis-image]: https://travis-ci.org/aerospike/aerospike-session-store-expressjs.svg?branch=master
+[travis-url]: https://travis-ci.org/aerospike/aerospike-session-store-expressjs
 
 The Aerospike Express Session Store is an implementation of the Express.js session store that uses Aerospike as the persistence layer for sessions. The session middleware for Express is provided by the [session-express](https://github.com/expressjs/session) module. Aerospike DB is a high-performance NoSQL key-value store: [www.aerospike.com](http://www.aerospike.com/).
 
