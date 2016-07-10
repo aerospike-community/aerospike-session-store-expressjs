@@ -1,184 +1,55 @@
-aerospike-session-store
-=======================
-aerospike-session-store is an implementation of the ExpressJS session store that uses Aerospike as the persistence layer for sessions.
+# Aerospike Express Session Store
+
+The Aerospike Express Session Store is an implementation of the Express.js session store that uses Aerospike as the persistence layer for sessions. The session middleware for Express is provided by the [session-express](https://github.com/expressjs/session) module. Aerospike DB is a high-performance NoSQL key-value store: [www.aerospike.com](http://www.aerospike.com/).
 
 ## Installation
 
-via npm:
+Via npm:
 
 ```bash
 $ npm install aerospike-session-store
 ```
-
-## Options
-
-* `ttl` Aerospike record ttl in seconds.
-* `hosts` The collection of hosts on which Aerospike is deployed.
-* `prefix` The optional prefix for each session key, in case the Aerospike servers are shared with something generating its own keys. Default 'sess:' is used if no value is provided.
-* `ns` The optional Aerospike namespace to be used for session storage. The 'test' namespace is used if no value is provided.
-* `st` The name of the Aerospike set used to create the session store. A set named 'store' is used if no value is provided.
-
-
 ## Usage
 
 ### Initialization
 
+Pass the `express-session` store into `aerospike-session-store` to create an `AerospikeStore` constructor. Then use that constructor to create a new store instance:
+
 ```js
-var session = require('express-session');
-var aerospikeStore = require('aerospike-session-store')(session);
+const session = require('express-session')
+const AerospikeStore = require('aerospike-session-store')(session)
 
-var AeroSpikeStore = new aerospikeStore({
-  ttl: 86400,
-  hosts: ['127.0.0.1:3000'],
-  prefix: 'sess:',
-  ns: 'test'
-});
-
-var app = express();
+var app = express()
 app.use(session({
   secret: '123456789QWERTY',
-  store: AeroSpikeStore,
+  store: new AerospikeStore({
+    namespace: 'express',
+    set: 'session',
+    ttl: 86400, // 1 day
+    hosts: '10.0.0.1:3000,10.0.0.2:3000'
+  }),
   resave: false,
   saveUninitialized: false
-}));
+}))
 ```
 
-### Set session
+### Options
 
-Stores the session into the Aerospike session store. Session values are serialized into a string and saved in the Aerospike session store as a string.
+The session store requires an Aerospike Client instance to connect to the DB cluster. An existing client instance can be passed in using the `client` option. Otherwise, the session store will create it's own client instance. The Aerospike session store can be initialized with a number of optional parameters:
 
-`set(<sessionID>, {cookie:{maxAge:<n seconds>}, <session value>}, <callback_function(err,res)>)` 
+* `client` - An existing Aerospike client instance that the session
+  store should use instead of creating it's own instance.
+* `namespace` - The Aerospike namespace to be used for session storage. (default: 'test')
+* `set` - The Aerospike set name used when creating session records. (default: 'express-session')
+* `ttl` - Time-to-live in seconds for the session records created in the
+  Aerospike db. If not specified, the ttl will be determined based on the `maxAge` of the session cookie, if any. Set `ttl` to zero to disable usage of ttl. However, note that a default ttl at the namespace level might still apply.
+* `serializer` - A custom serializer to convert session objects to/from a format suitable for storage in an Aerospike record. By default the `JSON` module is used to serialize session objects to/from JSON format.
 
-#### Options
-* `sessionID` The unique session id.
-* `maxAge` The ttl value for session. This value is in seconds.
-* `session value` e.g., email: 'email@domain.com'.
-* `callback_function(err,res)` Returns error codes. `err` = returns error, if any. `res` contains session key.
+Additional options are passed on to the Aerospike client when creating a new client instance.
 
-### Example
-```js
-AeroSpikeStore.set('session1',{cookie:{maxAge:2000},name:'firstname lastname'}, function(err, ok){
-          if(err) throw err;
-      });
-```
-
-
-### Get session
-Retrieves session based on the given sessionID. Returns error if the requested session is not found.
-
-`get(<sessionID>, <callback_function(err,res)>)`
-
-#### Options
-* `sessionID` The ID of the session id to be retrieved.
-* `callback_function(err,res)` Returns error codes or session object in JSON. `err` holds error. `res` holds session object.
-
-### Example
-```js
-AeroSpikeStore.get('session1', function(err, ok){
-        assert.ok(err.code === 0, 'get error!!!!');
-        assert.ok(ok.cookie.maxAge===2000,'get maxAge error!!!!');
-        assert.ok(ok.name ==='y.p','get name error!!!!'); 
-      });
-```
-
-### Session length
-Returns the number of sessions stored in the session store.
-
-`length(<callback_function(err,res)>)`
-
-#### Options
-* `callback_function(err,res)` Returns error codes or length as integer (0 or >0. `err` holds error. `res` holds length as integer.
-
-### Example
-```js
-AeroSpikeStore.length(function(length){
-        console.log(length);
-      });
-```
-
-### Destroy particular user session
-Destroys the requested session
-
-`destroy(<sessionID>,<callback_function(err,res)>)`
-
-#### Options
-* `sessionID` The ID of the session to be destroyed.
-* `callback_function(err,res)` Returns error if the requested session cannot be destroyed.
-
-### Example
-```js
-AeroSpikeStore.destroy('session1', function(err){
-        if(err) throw err;
-      });
-```
-
-### Session length
-Returns the number of sessions stored in the session store.
-
-`length(<callback_function(err,res)>)`
-
-#### Options
-* `callback_function(err,res)` Returns error codes or length as integer (0 or >0. `err` holds error. `res` holds length as integer.
-
-### Example
-```js
-AeroSpikeStore.length(function(length){
-        console.log(length);
-      });
-```
-
-### Destroy particular user session
-Destroys the requested session
-
-`destroy(<sessionID>,<callback_function(err,res)>)`
-
-#### Options
-* `sessionID` The ID of the session to be destroyed.
-* `callback_function(err,res)` Returns error if the requested session cannot be destroyed.
-
-### Example
-```js
-AeroSpikeStore.destroy('session1', function(err){
-  			if(err) throw err;
-  		});
-```
-
-## Tests
-
-You need `mocha`.
-
-```bash
-make test
-```
-OR
-
-```bash
-mocha test
-```
-
-## Benchmark
-
-You need `benchmark`.
-
-```js
-node ./benchmark/benchmark.js
-```
 
 ## License
 
+The Aerospike Express Session Store is made availabled under the terms of the Apache License, Version 2, as stated in the file LICENSE.
 
-
-Copyright (c) 2011-2015 
-
-{Licence and copyright notice to go here}
-
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+Individual files may be made available under their own specific license, all compatible with Apache License, Version 2. Please see individual files for details.
