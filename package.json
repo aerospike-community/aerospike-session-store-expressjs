@@ -1,6 +1,6 @@
 {
   "name": "aerospike-session-store",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Aerospike session store for Express.js session middleware",
   "main": "index.js",
   "keywords": [
