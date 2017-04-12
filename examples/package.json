@@ -1,0 +1,11 @@
+{
+  "name": "aerospike-session-store-example",
+  "version": "0.0.1",
+  "description": "Demo app using Aerospike Express Session Store",
+  "main": "express.js",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "express": "^4.0",
+    "express-session": "^1.0"
+  }
+}
