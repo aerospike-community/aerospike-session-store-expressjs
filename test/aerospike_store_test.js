@@ -53,6 +53,17 @@ test('basic', function (t) {
   return lifecycleTest(store, t)
 })
 
+test('clear', function (t) {
+  const store = new AerospikeStore()
+  Promise.promisifyAll(store)
+
+  return store.setAsync('sess1', { name: 'jan' })
+    .then(() => store.clearAsync())
+    .then(() => store.getAsync('sess1'))
+    .then(session => t.equal(session, undefined, 'all sessions cleared'))
+    .then(() => store.client.close(false))
+})
+
 test('existing client', function (t) {
   return Aerospike.connect()
     .then(function (client) {
