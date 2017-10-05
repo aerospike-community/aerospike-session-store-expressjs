@@ -47,6 +47,7 @@ function start_server {
   instance=$1
   dir="instance${instance}"
   port=$((2900 + 100 * $instance))
+  echo "## Starting Aerospike instance ${instance}/${nodes} on port ${port}"
   mkdir ${dir}
   ./bin/aerospike init --home ${dir} --instance ${instance} --service-port ${port}
   cd ${dir}
@@ -71,7 +72,6 @@ echo "## Fetching Aerospike server distribution"
 install_server
 for ((node = 1; node <= nodes; node++))
 do
-  echo "## Starting Aerospike server instance ${node}/${nodes}"
   start_server $node
 done
 cd ${pwd}
