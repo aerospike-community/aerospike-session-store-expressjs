@@ -14,20 +14,24 @@
     "url": "https://github.com/aerospike/aerospike-session-store-expressjs"
   },
   "dependencies": {
-    "aerospike": "^2.0",
-    "express-session": "^1.0",
-    "debug": "^2.2.0"
+    "aerospike": "^3.0.0",
+    "debug": "^2.6.9",
+    "express-session": "^1.15.6"
   },
   "devDependencies": {
     "blue-tape": "^0.2",
-    "bluebird": "^3.0",
-    "standard": "^7.0",
-    "tape": "^4.2.1"
+    "bluebird": "^3.5.1",
+    "codecov": "^2.3.0",
+    "nyc": "^11.2.1",
+    "standard": "^10.0",
+    "tape": "^4.8.0"
   },
   "scripts": {
-    "test": "standard && DEBUG=* tape \"test/*_test.js\"",
+    "test": "DEBUG=session:* tape \"test/*_test.js\"",
+    "posttest": "standard",
     "bench": "node benchmark/aerospikebench",
-    "lint": "standard"
+    "coverage": "nyc npm test; nyc --reporter=lcov report",
+    "codecov": "codecov"
   },
   "bugs": {
     "url": "https://github.com/aerospike/aerospike-session-store-expressjs/issues"
