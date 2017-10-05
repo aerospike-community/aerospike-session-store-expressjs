@@ -1,3 +1,10 @@
+v0.3.0 / 2017-10-05
+===================
+
+* Update Aerospike client to v3
+* Add AerospikeStore#clear method to delete all sessions
+* Add AerospikeStore#close method to close Aerospike client connection
+
 v0.2.0 / 2016-09-14
 ===================
 
