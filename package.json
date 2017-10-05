@@ -15,13 +15,13 @@
   },
   "dependencies": {
     "aerospike": "^3.0.0",
-    "debug": "^2.6.9",
-    "express-session": "^1.15.6"
+    "debug": "^2.6.9"
   },
   "devDependencies": {
     "blue-tape": "^0.2",
     "bluebird": "^3.5.1",
     "codecov": "^2.3.0",
+    "express-session": "^1.15.6",
     "nyc": "^11.2.1",
     "standard": "^10.0",
     "tape": "^4.8.0"
