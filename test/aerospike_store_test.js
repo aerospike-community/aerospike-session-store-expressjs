@@ -116,6 +116,21 @@ test('serializer', function (t) {
   return lifecycleTest(store, t)
 })
 
+test('serializer error', function (t) {
+  const a = {}
+  const b = {}
+  // create circular reference to cause serialization error
+  a.b = b
+  b.a = a
+
+  const store = new AerospikeStore()
+  store.set('sid', a, error => {
+    t.ok(error, 'serialization error is passed to callback')
+    store.close()
+    t.end()
+  })
+})
+
 test('after', function (t) {
   Aerospike.releaseEventLoop()
   t.end()
