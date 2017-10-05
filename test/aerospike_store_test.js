@@ -36,7 +36,7 @@ function lifecycleTest (store, t) {
     .then(() => store.destroyAsync('sid'))
     .then(() => store.getAsync('sid'))
     .then(data => t.equal(undefined, data, '#destroy() ok'))
-    .then(() => store.client.close(false))
+    .then(() => store.close(false))
 }
 
 test('defaults', function (t) {
@@ -65,7 +65,7 @@ test('clear', function (t) {
     .then(() => delay(100))
     .then(() => store.getAsync('sess1'))
     .then(session => t.equal(session, undefined, 'all sessions cleared'))
-    .then(() => store.client.close(false))
+    .then(() => store.close(false))
 })
 
 test('existing client', function (t) {
@@ -97,7 +97,7 @@ test('failed connection', function (t) {
   return store.setAsync('sid', { cookie: { maxAge: 2000 }, name: 'jan' })
     .catch(function (err) {
       t.ok(/Not connected/.test(err.message), 'failed connection')
-      store.client.close(false)
+      store.close(false)
     })
 })
 
