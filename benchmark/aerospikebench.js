@@ -20,7 +20,7 @@ var task = function (err, init) {
     inFlight++
   } else if (sessionsCreated === sessionsToCreate && inFlight === 0) {
     console.timeEnd('bench ' + sessionsToCreate)
-    store.client.close()
+    store.close()
   }
 }
 
