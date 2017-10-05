@@ -21,19 +21,22 @@ const test = require('blue-tape')
 const session = require('express-session')
 const AerospikeStore = require('../')(session)
 const Aerospike = require('aerospike')
+const delay = require('util').promisify(setTimeout)
 
 function lifecycleTest (store, t) {
   Promise.promisifyAll(store)
 
-  return store.setAsync('sid', { cookie: { maxAge: 2000 }, name: 'jan' })
-    .then(function () {
-      t.pass('#set() ok')
-      return store.getAsync('sid')
-    })
-    .then(function (data) {
-      t.deepEqual({ cookie: { maxAge: 2000 }, name: 'jan' }, data, '#get() ok')
-      return store.client.close(false)
-    })
+  const session = { cookie: { maxAge: 2000 }, name: 'jan' }
+  return store.setAsync('sid', session)
+    .then(() => t.pass('#set() ok'))
+    .then(() => store.getAsync('sid'))
+    .then(data => t.deepEqual({ cookie: { maxAge: 2000 }, name: 'jan' }, data, '#get() ok'))
+    .then(() => store.touchAsync('sid', session))
+    .then(() => t.pass('#touch() ok'))
+    .then(() => store.destroyAsync('sid'))
+    .then(() => store.getAsync('sid'))
+    .then(data => t.equal(undefined, data, '#destroy() ok'))
+    .then(() => store.client.close(false))
 }
 
 test('defaults', function (t) {
@@ -59,6 +62,7 @@ test('clear', function (t) {
 
   return store.setAsync('sess1', { name: 'jan' })
     .then(() => store.clearAsync())
+    .then(() => delay(100))
     .then(() => store.getAsync('sess1'))
     .then(session => t.equal(session, undefined, 'all sessions cleared'))
     .then(() => store.client.close(false))
