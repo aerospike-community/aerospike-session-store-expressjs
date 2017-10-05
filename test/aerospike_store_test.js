@@ -1,8 +1,26 @@
+// *****************************************************************************
+// Copyright 2016-2017 Aerospike, Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License")
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+// *****************************************************************************
+
+'use strict'
+
 const Promise = require('bluebird')
 const test = require('blue-tape')
 const session = require('express-session')
 const AerospikeStore = require('../')(session)
-const Aerospike = Promise.promisifyAll(require('aerospike'))
+const Aerospike = require('aerospike')
 
 function lifecycleTest (store, t) {
   Promise.promisifyAll(store)
@@ -19,7 +37,7 @@ function lifecycleTest (store, t) {
 }
 
 test('defaults', function (t) {
-  var store = new AerospikeStore()
+  const store = new AerospikeStore()
   t.equal(store.as_namespace, 'test', 'sets default namespace to test')
   t.equal(store.as_set, 'express-session', 'sets default set name to express-session')
   t.notOk(store.ttl, 'ttl not set')
@@ -31,20 +49,20 @@ test('defaults', function (t) {
 
 test('basic', function (t) {
   t.throws(AerospikeStore, TypeError, 'constructor not callable as function')
-  var store = new AerospikeStore()
+  const store = new AerospikeStore()
   return lifecycleTest(store, t)
 })
 
 test('existing client', function (t) {
-  return Aerospike.connectAsync()
+  return Aerospike.connect()
     .then(function (client) {
-      var store = new AerospikeStore({ client: client })
+      const store = new AerospikeStore({ client: client })
       return lifecycleTest(store, t)
     })
 })
 
 test('options', function (t) {
-  var store = new AerospikeStore({
+  const store = new AerospikeStore({
     namespace: 'express',
     set: 'session',
     ttl: 3600
@@ -58,7 +76,7 @@ test('options', function (t) {
 })
 
 test('failed connection', function (t) {
-  var store = new AerospikeStore({ hosts: '127.0.0.1:3333', connTimeoutMs: 500 })
+  const store = new AerospikeStore({ hosts: '127.0.0.1:3333', connTimeoutMs: 500 })
   Promise.promisifyAll(store)
 
   return store.setAsync('sid', { cookie: { maxAge: 2000 }, name: 'jan' })
@@ -69,17 +87,17 @@ test('failed connection', function (t) {
 })
 
 test('serializer', function (t) {
-  var serializer = {
-    stringify: function () { return 'XXX' + JSON.stringify.apply(JSON, arguments) },
-    parse: function (x) {
-      t.ok(x.match(/^XXX/))
-      return JSON.parse(x.substring(3))
+  const serializer = {
+    stringify: (value, replacer, space) => 'XXX' + JSON.stringify(value, replacer, space),
+    parse: str => {
+      t.ok(str.match(/^XXX/))
+      return JSON.parse(str.substring(3))
     }
   }
   t.equal(serializer.stringify('UnitTest'), 'XXX"UnitTest"')
   t.equal(serializer.parse(serializer.stringify('UnitTest')), 'UnitTest')
 
-  var store = new AerospikeStore({ serializer: serializer })
+  const store = new AerospikeStore({ serializer: serializer })
   return lifecycleTest(store, t)
 })
 
