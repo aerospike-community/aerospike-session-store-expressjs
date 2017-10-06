@@ -129,21 +129,28 @@ test('failed connection', function (t) {
 })
 
 test('serializer', function (t) {
-  const serializer = {
-    stringify: (value, replacer, space) => 'XXX' + JSON.stringify(value, replacer, space),
-    parse: str => {
-      t.ok(str.match(/^XXX/))
-      return JSON.parse(str.substring(3))
-    }
+  const fn = function () {
+    const options = { serializer: 'foo' }
+    const store = new AerospikeStore(options)
+    store.close(false)
   }
-  t.equal(serializer.stringify('UnitTest'), 'XXX"UnitTest"')
-  t.equal(serializer.parse(serializer.stringify('UnitTest')), 'UnitTest')
+  t.throws(fn, 'serializer', 'Trying to set `serializer` should raise an error')
+  t.end()
+})
 
-  const store = new AerospikeStore({ serializer: serializer })
+test('mapper', function (t) {
+  const mapper = {
+    toRecord: session => session,
+    fromRecord: bins => bins
+  }
+  t.deepEqual(mapper.toRecord({ name: 'jan' }), { name: 'jan' })
+  t.deepEqual(mapper.fromRecord({ name: 'jan' }), { name: 'jan' })
+
+  const store = new AerospikeStore({ mapper: mapper })
   return lifecycleTest(store, t)
 })
 
-test('serializer error', function (t) {
+test('mapper error', function (t) {
   const a = {}
   const b = {}
   // create circular reference to cause serialization error
