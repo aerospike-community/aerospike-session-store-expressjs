@@ -30,7 +30,7 @@
     "test": "DEBUG=session:* tape \"test/*_test.js\"",
     "posttest": "standard",
     "bench": "node benchmark/aerospikebench",
-    "coverage": "nyc npm test; nyc --reporter=lcov report",
+    "coverage": "nyc npm test && nyc --reporter=lcov report",
     "codecov": "codecov"
   },
   "bugs": {

@@ -21,7 +21,10 @@ const test = require('blue-tape')
 const session = require('express-session')
 const AerospikeStore = require('../')(session)
 const Aerospike = require('aerospike')
-const delay = require('util').promisify(setTimeout)
+
+function delay (ms) {
+  return new Promise(resolve => setTimeout(resolve, ms))
+}
 
 function lifecycleTest (store, t) {
   Promise.promisifyAll(store)
@@ -62,7 +65,7 @@ test('clear', function (t) {
 
   return store.setAsync('sess1', { name: 'jan' })
     .then(() => store.clearAsync())
-    .then(() => delay(100))
+    .then(() => delay(200))
     .then(() => store.getAsync('sess1'))
     .then(session => t.equal(session, undefined, 'all sessions cleared'))
     .then(() => store.close(false))
