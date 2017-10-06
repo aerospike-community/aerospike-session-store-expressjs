@@ -1,9 +1,19 @@
+v0.4.0 / 2017-10-06
+===================
+
+* **New Features**
+  * Subscribe to client connect/disconnect events [PR #9](https://github.com/aerospike/aerospike-session-store-expressjs/pull/9)
+  * BREAKING: Replace serializer with data mapper [PR #10](https://github.com/aerospike/aerospike-session-store-expressjs/pull/10)
+
 v0.3.0 / 2017-10-05
 ===================
 
-* Update Aerospike client to v3
-* Add AerospikeStore#clear method to delete all sessions
-* Add AerospikeStore#close method to close Aerospike client connection
+* **New Features**
+  * Add AerospikeStore#clear method to delete all sessions
+  * Add AerospikeStore#close method to close Aerospike client connection
+
+* **Updates**
+  * Update Aerospike client to v3
 
 v0.2.0 / 2016-09-14
 ===================
