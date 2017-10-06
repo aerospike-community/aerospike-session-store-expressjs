@@ -63,8 +63,8 @@ parameters:
   Aerospike db. If not specified, the ttl will be determined based on the
   `maxAge` of the session cookie, if any. Set `ttl` to zero to disable usage of
   ttl. However, note that a default ttl at the namespace level might still apply.
-* `serializer` - A custom serializer to convert session objects to/from a
-  format suitable for storage in an Aerospike record. By default the `JSON`
+* `mapper` - A custom data mapper to convert session objects to/from a
+  format suitable for storage in an Aerospike record. By default, the `JSON`
   module is used to serialize session objects to/from JSON format.
 
 Additional options are passed on to the Aerospike client when creating a new
