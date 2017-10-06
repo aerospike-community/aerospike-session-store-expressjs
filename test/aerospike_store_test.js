@@ -22,6 +22,11 @@ const session = require('express-session')
 const AerospikeStore = require('../')(session)
 const Aerospike = require('aerospike')
 
+test.onFinish(() => {
+  console.info('tests finished')
+  Aerospike.releaseEventLoop()
+})
+
 function delay (ms) {
   return new Promise(resolve => setTimeout(resolve, ms))
 }
@@ -42,10 +47,15 @@ function lifecycleTest (store, t) {
     .then(() => store.close(false))
 }
 
+test('constructor', function (t) {
+  t.throws(AerospikeStore, TypeError, 'constructor not callable as function')
+  t.end()
+})
+
 test('defaults', function (t) {
   const store = new AerospikeStore()
-  t.equal(store.as_namespace, 'test', 'sets default namespace to test')
-  t.equal(store.as_set, 'express-session', 'sets default set name to express-session')
+  t.equal(store.as_namespace, 'test', 'sets default namespace')
+  t.equal(store.as_set, 'express-session', 'sets default set name')
   t.notOk(store.ttl, 'ttl not set')
   t.ok(store.client, 'creates client')
 
@@ -54,7 +64,6 @@ test('defaults', function (t) {
 })
 
 test('basic', function (t) {
-  t.throws(AerospikeStore, TypeError, 'constructor not callable as function')
   const store = new AerospikeStore()
   return lifecycleTest(store, t)
 })
@@ -64,8 +73,9 @@ test('clear', function (t) {
   Promise.promisifyAll(store)
 
   return store.setAsync('sess1', { name: 'jan' })
+    .then(() => delay(5))
     .then(() => store.clearAsync())
-    .then(() => delay(200))
+    .then(() => delay(100))
     .then(() => store.getAsync('sess1'))
     .then(session => t.equal(session, undefined, 'all sessions cleared'))
     .then(() => store.close(false))
@@ -91,6 +101,20 @@ test('options', function (t) {
   t.equal(store.ttl, 3600, 'sets ttl')
 
   return lifecycleTest(store, t)
+})
+
+test('events', function (t) {
+  const store = new AerospikeStore()
+  store.on('connect', () => {
+    console.info('connect event received')
+    t.pass('received connect event')
+    console.info('closing store')
+    store.close(false)
+  })
+  store.on('disconnect', () => {
+    t.pass('received disconnect event')
+    t.end()
+  })
 })
 
 test('failed connection', function (t) {
@@ -132,9 +156,4 @@ test('serializer error', function (t) {
     store.close()
     t.end()
   })
-})
-
-test('after', function (t) {
-  Aerospike.releaseEventLoop()
-  t.end()
 })
