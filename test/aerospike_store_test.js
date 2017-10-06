@@ -152,8 +152,8 @@ test('serializer error', function (t) {
 
   const store = new AerospikeStore()
   store.set('sid', a, error => {
-    t.ok(error, 'serialization error is passed to callback')
-    store.close()
+    t.assert(error && error.message.match(/circular/), 'serialization error is passed to callback')
+    store.close(false)
     t.end()
   })
 })
