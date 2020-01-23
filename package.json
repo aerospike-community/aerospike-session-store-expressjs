@@ -11,7 +11,7 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/aerospike/aerospike-session-store-expressjs"
+    "url": "https://github.com/aerospike-community/aerospike-session-store-expressjs"
   },
   "dependencies": {
     "aerospike": "^3.0.0",
@@ -34,6 +34,6 @@
     "codecov": "codecov"
   },
   "bugs": {
-    "url": "https://github.com/aerospike/aerospike-session-store-expressjs/issues"
+    "url": "https://github.com/aerospike-community/aerospike-session-store-expressjs/issues"
   }
 }
