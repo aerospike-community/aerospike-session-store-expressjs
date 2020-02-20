@@ -35,16 +35,20 @@ function lifecycleTest (store, t) {
   Promise.promisifyAll(store)
 
   const session = { cookie: { maxAge: 2000 }, name: 'jan' }
-  return store.setAsync('sid', session)
-    .then(() => t.pass('#set() ok'))
-    .then(() => store.getAsync('sid'))
-    .then(data => t.deepEqual({ cookie: { maxAge: 2000 }, name: 'jan' }, data, '#get() ok'))
-    .then(() => store.touchAsync('sid', session))
-    .then(() => t.pass('#touch() ok'))
-    .then(() => store.destroyAsync('sid'))
-    .then(() => store.getAsync('sid'))
-    .then(data => t.equal(undefined, data, '#destroy() ok'))
-    .then(() => store.close(false))
+  return new Promise((resolve) => {
+    store.on('connect', () => resolve(
+      store.setAsync('sid', session)
+        .then(() => t.pass('#set() ok'))
+        .then(() => store.getAsync('sid'))
+        .then(data => t.deepEqual({ cookie: { maxAge: 2000 }, name: 'jan' }, data, '#get() ok'))
+        .then(() => store.touchAsync('sid', session))
+        .then(() => t.pass('#touch() ok'))
+        .then(() => store.destroyAsync('sid'))
+        .then(() => store.getAsync('sid'))
+        .then(data => t.equal(undefined, data, '#destroy() ok'))
+        .then(() => store.close(false))
+    ))
+  })
 }
 
 test('constructor', function (t) {
@@ -59,8 +63,10 @@ test('defaults', function (t) {
   t.notOk(store.ttl, 'ttl not set')
   t.ok(store.client, 'creates client')
 
-  store.client.close(false)
-  t.end()
+  store.on('connect', () => {
+    store.client.close(false)
+    t.end()
+  })
 })
 
 test('basic', function (t) {
@@ -72,13 +78,17 @@ test('clear', function (t) {
   const store = new AerospikeStore()
   Promise.promisifyAll(store)
 
-  return store.setAsync('sess1', { name: 'jan' })
-    .then(() => delay(5))
-    .then(() => store.clearAsync())
-    .then(() => delay(100))
-    .then(() => store.getAsync('sess1'))
-    .then(session => t.equal(session, undefined, 'all sessions cleared'))
-    .then(() => store.close(false))
+  return new Promise((resolve) => {
+    store.on('connect', () => resolve(
+      store.setAsync('sess1', { name: 'jan' })
+        .then(() => delay(5))
+        .then(() => store.clearAsync())
+        .then(() => delay(100))
+        .then(() => store.getAsync('sess1'))
+        .then(session => t.equal(session, undefined, 'all sessions cleared'))
+        .then(() => store.close(false))
+    ))
+  })
 })
 
 test('existing client', function (t) {
@@ -91,12 +101,12 @@ test('existing client', function (t) {
 
 test('options', function (t) {
   const store = new AerospikeStore({
-    namespace: 'express',
+    namespace: 'test',
     set: 'session',
     ttl: 3600
   })
 
-  t.equal(store.as_namespace, 'express', 'uses provided namespace')
+  t.equal(store.as_namespace, 'test', 'uses provided namespace')
   t.equal(store.as_set, 'session', 'uses provided set name')
   t.equal(store.ttl, 3600, 'sets ttl')
 
@@ -158,9 +168,11 @@ test('mapper error', function (t) {
   b.a = a
 
   const store = new AerospikeStore()
-  store.set('sid', a, error => {
-    t.assert(error && error.message.match(/circular/), 'serialization error is passed to callback')
-    store.close(false)
-    t.end()
+  store.on('connect', () => {
+    store.set('sid', a, (error) => {
+      t.assert(error && error.message.match(/circular/), 'serialization error is passed to callback')
+      store.close(false)
+      t.end()
+    })
   })
 })
