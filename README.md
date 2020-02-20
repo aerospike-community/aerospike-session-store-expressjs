@@ -1,9 +1,9 @@
 # Aerospike Express Session Store [![travis][travis-image]][travis-url] [![codecov][codecov-image]][codecov-url] [![npm][npm-image]][npm-url]
 
-[travis-image]: https://travis-ci.org/aerospike/aerospike-session-store-expressjs.svg?branch=master
-[travis-url]: https://travis-ci.org/aerospike/aerospike-session-store-expressjs
-[codecov-image]: https://codecov.io/gh/aerospike/aerospike-session-store-expressjs/branch/master/graph/badge.svg
-[codecov-url]: https://codecov.io/gh/aerospike/aerospike-session-store-expressjs
+[travis-image]: https://travis-ci.org/aerospike-community/aerospike-session-store-expressjs.svg?branch=master
+[travis-url]: https://travis-ci.org/aerospike-community/aerospike-session-store-expressjs
+[codecov-image]: https://codecov.io/gh/aerospike-community/aerospike-session-store-expressjs/branch/master/graph/badge.svg
+[codecov-url]: https://codecov.io/gh/aerospike-community/aerospike-session-store-expressjs
 [npm-image]: https://img.shields.io/npm/v/aerospike-session-store.svg
 [npm-url]: https://www.npmjs.com/package/aerospike-session-store
 
