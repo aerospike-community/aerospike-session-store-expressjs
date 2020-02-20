@@ -47,6 +47,10 @@ function lifecycleTest (store, t) {
         .then(() => store.getAsync('sid'))
         .then(data => t.equal(undefined, data, '#destroy() ok'))
         .then(() => store.close(false))
+        .catch((error) => {
+          store.close(false)
+          t.fail(error)
+        })
     ))
   })
 }
@@ -101,12 +105,12 @@ test('existing client', function (t) {
 
 test('options', function (t) {
   const store = new AerospikeStore({
-    namespace: 'test',
+    namespace: 'express',
     set: 'session',
     ttl: 3600
   })
 
-  t.equal(store.as_namespace, 'test', 'uses provided namespace')
+  t.equal(store.as_namespace, 'express', 'uses provided namespace')
   t.equal(store.as_set, 'session', 'uses provided set name')
   t.equal(store.ttl, 3600, 'sets ttl')
 
