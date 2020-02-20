@@ -22,7 +22,7 @@
     "bluebird": "^3.5.1",
     "codecov": "^3.6.5",
     "express-session": "^1.15.6",
-    "nyc": "^11.2.1",
+    "nyc": "^15.0.0",
     "standard": "^10.0",
     "tape": "^4.8.0"
   },
