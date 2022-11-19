@@ -14,7 +14,7 @@
     "url": "https://github.com/aerospike-community/aerospike-session-store-expressjs"
   },
   "dependencies": {
-    "aerospike": "^3.0.0",
+    "aerospike": "^5.1.0",
     "debug": "^2.6.9"
   },
   "devDependencies": {
